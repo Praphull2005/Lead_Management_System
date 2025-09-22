@@ -6,14 +6,12 @@ import { authenticate } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Generate JWT token
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE
   });
 };
 
-// Set cookie options
 const getCookieOptions = () => ({
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
@@ -57,7 +55,6 @@ router.post('/register', [
 
     const { first_name, last_name, email, password } = req.body;
 
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({
@@ -66,7 +63,6 @@ router.post('/register', [
       });
     }
 
-    // Create new user
     const user = new User({
       first_name,
       last_name,
@@ -76,7 +72,6 @@ router.post('/register', [
 
     await user.save();
 
-    // Generate token and set cookie
     const token = generateToken(user._id);
     res.cookie('token', token, getCookieOptions());
 
@@ -121,7 +116,6 @@ router.post('/login', [
 
     const { email, password } = req.body;
 
-    // Find user and include password
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
       return res.status(401).json({
@@ -130,7 +124,6 @@ router.post('/login', [
       });
     }
 
-    // Check password
     const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
       return res.status(401).json({
@@ -139,7 +132,6 @@ router.post('/login', [
       });
     }
 
-    // Generate token and set cookie
     const token = generateToken(user._id);
     res.cookie('token', token, getCookieOptions());
 
@@ -162,7 +154,6 @@ router.post('/login', [
   }
 });
 
-// Logout user
 router.post('/logout', (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,
@@ -176,7 +167,7 @@ router.post('/logout', (req, res) => {
   });
 });
 
-// Get current user
+//Get profile
 router.get('/me', authenticate, async (req, res) => {
   try {
     res.status(200).json({
