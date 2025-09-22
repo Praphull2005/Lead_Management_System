@@ -9,8 +9,11 @@
     "server": "nodemon server/index.js",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "render-build": "npm run build",
+    "render-start" : "node server/index.js"
   },
+  
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
     "ag-grid-community": "^32.2.1",

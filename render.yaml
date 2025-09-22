@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: lead-management-system
+    env: node
+    buildCommand: npm install && npm run render-build
+    startCommand: npm run render-start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+    # Add your other environment variables here
